@@ -1,4 +1,5 @@
 import pandas as pd
+from Expert_sys_components.TO import module_to_full
 from Expert_sys_components.TO import module_to
 from bs4 import BeautifulSoup
 from io import StringIO
@@ -18,6 +19,7 @@ def detect_encoding(file_path):
 eirz = './data/hist_jku_2025_01_5000_03_new.csv'
 mos_energo = './data/EE0225EVC_1.csv'
 mos_obl_gas = './data/GAZSUMM0225_1.xml'
+merged_data = './data/merged_table.csv'
 
 data_eirz = pd.read_csv(eirz, encoding=detect_encoding(eirz), sep=';', low_memory=False, dtype=str)
 data_eirz = data_eirz.loc[:, ~data_eirz.columns.str.contains('Unnamed')]
@@ -33,12 +35,16 @@ soup = BeautifulSoup(xml_content, "xml")
 fixed_xml = str(soup)
 
 data_mos_obl_gas = pd.read_xml(StringIO(fixed_xml))
-print(data_mos_obl_gas.columns.tolist())
+#print(data_mos_obl_gas.columns.tolist())
+
+df_merged = module_to(data_eirz)
+df_merged.to_csv(merged_data, sep=';', encoding=detect_encoding(merged_data), index=False)
 
 
-#data_eirz = module_to(data_eirz)
+'''data_eirz = module_to_full(data_eirz)
+data_eirz.to_csv(eirz, sep=';', encoding=detect_encoding(eirz), index=False)'''
 
-data_eirz.to_csv(eirz, sep=';', encoding=detect_encoding(eirz), index=False)
+
 
 '''
 # проверка есть ли общие столбцы не надо
