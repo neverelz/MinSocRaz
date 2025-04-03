@@ -11,7 +11,7 @@ def module_to_full(full_df):
     calculated = (df['TARTO'] * df['SOB']).apply(lambda x: classic_round(x, 2))
 
     # маска расхождений, превышающих 10%
-    mask = np.abs(calculated - df['SUMTO']) > (0.1 * df['SUMTO'])
+    mask = np.abs(calculated - df['SUMTO']) > (0.05 * df['SUMTO'])
 
     # маска на выделение всех ошибок
     # mask = calculated != df['SUMTO']

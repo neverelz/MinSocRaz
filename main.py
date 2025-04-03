@@ -7,6 +7,8 @@ import re
 
 # поля: лицевой счёт, площадь, тариф техобслуживания, сумма техобслуживания TARTO
 
+# нормируются водоотведение (кнализация), водоснабжение, отопление (возможно, провериять есть признак счётчика иил нет), тко (твёрдые комунальные отходы)
+# если есть норматив, проверяем по диапазону, который будет в сетке, которую пришлёт директор в виде цсв
 
 # определение кодировки. Вообще должно автоматически делаться, но без этой функции не хочет, хз почему
 def detect_encoding(file_path):
@@ -35,7 +37,7 @@ soup = BeautifulSoup(xml_content, "xml")
 fixed_xml = str(soup)
 
 data_mos_obl_gas = pd.read_xml(StringIO(fixed_xml))
-#print(data_mos_obl_gas.columns.tolist())
+print(data_mos_obl_gas.columns.tolist())
 
 df_merged = module_to(data_eirz)
 df_merged.to_csv(merged_data, sep=';', encoding=detect_encoding(merged_data), index=False)
