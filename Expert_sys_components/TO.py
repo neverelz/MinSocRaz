@@ -6,12 +6,12 @@ def classic_round(x, decimals=2):
     return np.floor(x * scale + 0.5) / scale
 
 
-def module_to_full(full_df):
+def module_to_full(full_df, exclude_percent):
     df = full_df.copy().astype({'NUMLS': int, 'TARTO': float, 'SUMTO': float, 'SOB': float})
     calculated = (df['TARTO'] * df['SOB']).apply(lambda x: classic_round(x, 2))
 
-    # маска расхождений, превышающих 10%
-    mask = np.abs(calculated - df['SUMTO']) > (0.05 * df['SUMTO'])
+    # маска расхождений, превышающих 5%
+    mask = np.abs(calculated - df['SUMTO']) > (exclude_percent * df['SUMTO'])
 
     # маска на выделение всех ошибок
     # mask = calculated != df['SUMTO']
@@ -43,3 +43,7 @@ def module_to(full_df):
 
     print(df.describe())
     return df
+
+
+def processing(full_df):
+    df = full_df[['NUMLS', 'SOB', 'TARTO', 'SUMTO']].copy()

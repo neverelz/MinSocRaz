@@ -1,16 +1,17 @@
 import pandas as pd
 from Expert_sys_components.TO import module_to_full
 from Expert_sys_components.TO import module_to
+from Expert_sys_components.full_eirz_analyze import *
 from bs4 import BeautifulSoup
 from io import StringIO
 import re
 
-# поля: лицевой счёт, площадь, тариф техобслуживания, сумма техобслуживания TARTO
 
 # нормируются водоотведение (кнализация), водоснабжение, отопление (возможно, провериять есть признак счётчика иил нет), тко (твёрдые комунальные отходы)
 # если есть норматив, проверяем по диапазону, который будет в сетке, которую пришлёт директор в виде цсв
 
 # определение кодировки. Вообще должно автоматически делаться, но без этой функции не хочет, хз почему
+
 def detect_encoding(file_path):
     with open(file_path, 'rb') as f:
         raw_data = f.read()
@@ -26,6 +27,11 @@ merged_data = './data/merged_table.csv'
 data_eirz = pd.read_csv(eirz, encoding=detect_encoding(eirz), sep=';', low_memory=False, dtype=str)
 data_eirz = data_eirz.loc[:, ~data_eirz.columns.str.contains('Unnamed')]
 
+df_merged = full_eirz_analyze(data_eirz, 0.05)
+df_merged.to_csv(merged_data, sep=';', encoding=detect_encoding(merged_data), index=False)
+
+
+'''
 data_mos_energo = pd.read_csv(mos_energo, encoding=detect_encoding(mos_energo), sep=';', low_memory=False, dtype=str)
 data_mos_energo = data_mos_energo.loc[:, ~data_mos_energo.columns.str.contains('Unnamed')]
 
@@ -37,15 +43,19 @@ soup = BeautifulSoup(xml_content, "xml")
 fixed_xml = str(soup)
 
 data_mos_obl_gas = pd.read_xml(StringIO(fixed_xml))
-print(data_mos_obl_gas.columns.tolist())
+#print(data_mos_obl_gas.columns.tolist())
 
-df_merged = module_to(data_eirz)
-df_merged.to_csv(merged_data, sep=';', encoding=detect_encoding(merged_data), index=False)
+
+#df_merged = module_to(data_eirz)
+
+'''
+
+
+
 
 
 '''data_eirz = module_to_full(data_eirz)
 data_eirz.to_csv(eirz, sep=';', encoding=detect_encoding(eirz), index=False)'''
-
 
 
 '''
