@@ -2,7 +2,7 @@ import pandas as pd
 from Expert_sys_components.TO import module_to_full
 from Expert_sys_components.TO import module_to
 from Expert_sys_components.full_eirz_analyze import *
-from bs4 import BeautifulSoup
+#from bs4 import BeautifulSoup
 from io import StringIO
 import re
 
@@ -11,7 +11,6 @@ import re
 # если есть норматив, проверяем по диапазону, который будет в сетке, которую пришлёт директор в виде цсв
 
 # определение кодировки. Вообще должно автоматически делаться, но без этой функции не хочет, хз почему
-
 def detect_encoding(file_path):
     with open(file_path, 'rb') as f:
         raw_data = f.read()
