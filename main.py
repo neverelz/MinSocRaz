@@ -2,6 +2,7 @@ import pandas as pd
 from Expert_sys_components.TO import module_to_full
 from Expert_sys_components.TO import module_to
 from Expert_sys_components.full_eirz_analyze import *
+from Expert_sys_components.norm_check import *
 #from bs4 import BeautifulSoup
 from io import StringIO
 import re
@@ -19,15 +20,29 @@ def detect_encoding(file_path):
 
 # main
 eirz = './data/hist_jku_2025_01_5000_03_new.csv'
+norms ='./data/parsed_norms.csv'
 mos_energo = './data/EE0225EVC_1.csv'
 mos_obl_gas = './data/GAZSUMM0225_1.xml'
 merged_data = './data/merged_table.csv'
 
 data_eirz = pd.read_csv(eirz, encoding=detect_encoding(eirz), sep=';', low_memory=False, dtype=str)
 data_eirz = data_eirz.loc[:, ~data_eirz.columns.str.contains('Unnamed')]
+data_norm = pd.read_csv(norms, sep=';', dtype=str)
+data_norm = data_norm.astype(str).apply(lambda x: x.str.replace(',', '.'))
+
 
 df_merged = full_eirz_analyze(data_eirz, 0.05)
 df_merged.to_csv(merged_data, sep=';', encoding=detect_encoding(merged_data), index=False)
+
+# для проверки с вручную исправленными ошибками
+#data_eirz = pd.read_csv(merged_data, encoding=detect_encoding(merged_data), sep=';', low_memory=False, dtype=str)
+#data_eirz = data_eirz.loc[:, ~data_eirz.columns.str.contains('Unnamed')]
+new_df_merged = hard_norm_check(data_norm, df_merged)
+new_df_merged.to_csv(merged_data, sep=';', encoding=detect_encoding(merged_data), index=False)
+
+
+
+
 
 
 '''

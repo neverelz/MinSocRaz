@@ -84,12 +84,12 @@ def standard_module_check(df_group, exclude_percent, group_index):
     df_group['PROBLEM_FLAG'] = mask.astype(int)
     problems = df_group.loc[mask].assign(SUM_CHECK=calculated[mask], GROUP_NUM=group_index)
 
-    if not problems.empty:
+    '''if not problems.empty:
         print(
             problems[[df_group.columns[0], tar_col, sum_col, kol_col, 'SUM_CHECK', 'GROUP_NUM']]
             .rename(columns={kol_col: 'QTY', tar_col: 'TARIF', sum_col: 'SUM'})
             .to_string(index=False)
-        )
+        )'''
 
     return problems
 

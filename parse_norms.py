@@ -12,7 +12,7 @@ norm_TKO_s2 = []
 norm_TKO_kbm = []
 
 input_file = './data/norm_data.csv'
-output_file = 'parsed_norms.csv'
+output_file = './data/parsed_norms.csv'
 
 
 person_counts = ['1', '2', '3', '4', '5']
@@ -31,6 +31,12 @@ match_map = {
     8: norm_TKO_s,
     9: norm_TKO_kbm
 }
+
+def to_float_safe(val):
+    try:
+        return float(val.replace(',', '.'))
+    except (ValueError, AttributeError):
+        return val  # если это пустая строка или текст
 
 
 def find_match(row, norm):
@@ -71,7 +77,7 @@ with open(input_file, 'r', encoding='utf-8') as f:
                 room_count = match.group(1)
                 values = match.groups()[1:]
                 for i in range(len(values)):
-                    norm_otop_elec.append(f"{room_count} - {person_counts[i]} - {values[i]}")
+                    norm_otop_elec.append(values[i])  # f"{room_count} - {person_counts[i]} - {values[i]}"
                 continue
 
             match2 = pattern_otop_elec2.match(line)
@@ -79,7 +85,7 @@ with open(input_file, 'r', encoding='utf-8') as f:
                 people = match2.group(1)
                 rooms = match2.group(2)
                 value = match2.group(3)
-                norm_otop_elec.append(f"{rooms} - {people} - {value}")
+                norm_otop_elec.append(value)  # f"{rooms} - {people} - {value}"
 
 
         TKO_s2 = row[8]
@@ -90,7 +96,7 @@ with open(input_file, 'r', encoding='utf-8') as f:
             if match:
                 range_label = match.group(1)
                 norm_value = match.group(2)
-                norm_TKO_s2.append(f"{range_label} - {norm_value}")
+                norm_TKO_s2.append(norm_value)  # f"{range_label} - {norm_value}"
 
 
 
@@ -111,8 +117,18 @@ norm_TKO_kbm.extend([''] * (max_length - len(norm_TKO_kbm)))
 
 
 with open(output_file, 'w', newline='', encoding='utf-8') as f_out:
-    writer = csv.writer(f_out)
-    writer.writerow(['Норматив отопления', 'Норматив отопления элек (Комнаты - Человек - Значение)', 'Норматив ХВ',
+    writer = csv.writer(f_out, delimiter=';')
+    writer.writerow(['Норматив отопления', 'Норматив отопления элек', 'Норматив ХВ',
                      'Норматив ГВ', 'Норматив ГВ энергия', 'Норматив ТКО', 'Норматив ТКО общ', 'Норматив ТКО площадь', 'Норматив ТКО кбм'])  # Заголовки
     for value1, value2, value3, value4, value5, value6, value7, value8, value9 in zip(norm_otop, norm_otop_elec, norm_HV, norm_GV, norm_GV_energ, norm_TKO, norm_TKO_s, norm_TKO_s2, norm_TKO_kbm):
-        writer.writerow([value1, value2, value3, value4, value5, value6, value7, value8, value9])
+        writer.writerow([
+            to_float_safe(value1),
+            to_float_safe(value2),
+            to_float_safe(value3),
+            to_float_safe(value4),
+            to_float_safe(value5),
+            to_float_safe(value6),
+            to_float_safe(value7),
+            to_float_safe(value8),
+            to_float_safe(value9)
+        ])
