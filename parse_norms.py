@@ -110,7 +110,6 @@ norm_TKO_s2.extend([''] * (max_length - len(norm_TKO_s2)))
 norm_TKO_kbm.extend([''] * (max_length - len(norm_TKO_kbm)))
 
 
-# Сохраняем
 with open(output_file, 'w', newline='', encoding='utf-8') as f_out:
     writer = csv.writer(f_out)
     writer.writerow(['Норматив отопления', 'Норматив отопления элек (Комнаты - Человек - Значение)', 'Норматив ХВ',
