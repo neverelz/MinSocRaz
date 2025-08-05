@@ -105,13 +105,9 @@ def full_eirz_analyze(full_df, exclude_percent):
         group_index = int(key.split("_")[1])
 
         if group_index == 4:
-
             continue
-
         elif group_index == 39:
-
             continue
-
         else:
             problems = standard_module_check(group_df, exclude_percent, group_index)
             if not problems.empty:
