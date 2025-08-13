@@ -79,7 +79,9 @@ def standard_module_check(df_group, exclude_percent, group_index):
 
     # вычисляем свою сумму и накладываем маску расхождений
     calculated = (df_group[tar_col] * df_group[kol_col]).apply(lambda x: classic_round(x, 2))
-    mask = np.abs(calculated - df_group[sum_col]) > (exclude_percent * df_group[sum_col])
+    
+    # Исправленная логика проверки: используем абсолютные значения для корректной работы с отрицательными числами
+    mask = np.abs(calculated - df_group[sum_col]) > (exclude_percent * np.abs(df_group[sum_col]))
 
     df_group['PROBLEM_FLAG'] = mask.astype(int)
     problems = df_group.loc[mask].assign(SUM_CHECK=calculated[mask], GROUP_NUM=group_index)
@@ -105,9 +107,13 @@ def full_eirz_analyze(full_df, exclude_percent):
         group_index = int(key.split("_")[1])
 
         if group_index == 4:
+
             continue
+
         elif group_index == 39:
+
             continue
+
         else:
             problems = standard_module_check(group_df, exclude_percent, group_index)
             if not problems.empty:

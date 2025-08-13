@@ -5,6 +5,7 @@ from Expert_sys_components.full_eirz_analyze import *
 from Expert_sys_components.norm_check import *
 from Expert_sys_components.date_check import *
 from Expert_sys_components.statistics import *
+from Expert_sys_components.error_decoder import *
 #from bs4 import BeautifulSoup
 from io import StringIO
 import re
@@ -33,18 +34,20 @@ data_norm = pd.read_csv(norms, sep=';', dtype=str)
 data_norm = data_norm.astype(str).apply(lambda x: x.str.replace(',', '.'))
 
 
-df_merged = full_eirz_analyze(data_eirz, 0.05)
-df_merged.to_csv(merged_data, sep=';', encoding=detect_encoding(merged_data), index=False)
+#df_merged = full_eirz_analyze(data_eirz, 0.05)
+#df_merged.to_csv(merged_data, sep=';', encoding=detect_encoding(merged_data), index=False)
 # для проверки с вручную исправленными ошибками
-#data_eirz = pd.read_csv(merged_data, encoding=detect_encoding(merged_data), sep=';', low_memory=False, dtype=str)
-#data_eirz = data_eirz.loc[:, ~data_eirz.columns.str.contains('Unnamed')]
+data_eirz = pd.read_csv(merged_data, encoding=detect_encoding(merged_data), sep=';', low_memory=False, dtype=str)
+data_eirz = data_eirz.loc[:, ~data_eirz.columns.str.contains('Unnamed')]
 
-new_df_merged = hard_norm_check(data_norm, df_merged)
+new_df_merged = hard_norm_check(data_norm, data_eirz)
 final_df_merged = check_date_consistency(new_df_merged)
 
 stats = generate_statistics(final_df_merged)
 
 final_df_merged.to_csv(merged_data, sep=';', encoding=detect_encoding(merged_data), index=False)
+
+decode_error_groups(final_df_merged)    
 
 
 
